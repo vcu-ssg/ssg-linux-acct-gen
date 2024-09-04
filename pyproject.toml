@@ -9,6 +9,10 @@ packages = [{include="./src"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
+jupyter = "^1.1.1"
+matplotlib = "^3.9.2"
+plotly = "^5.24.0"
+click = "^8.1.7"
 
 
 [build-system]
