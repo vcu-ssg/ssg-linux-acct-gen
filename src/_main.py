@@ -9,6 +9,10 @@ from src.logging import DEFAULT_LOG_LEVEL, set_logger
 DEFAULT_GROUP_CSV_FILE = "semester-project-groups.csv"
 DEFAULT_HR_DDL_FILE = "hr-ddl.sql"
 
+##
+## Main command line entry point
+###
+
 @click.group()
 @click.option("--log-level",help="log level (DEBUG, etc.)",default=DEFAULT_LOG_LEVEL)
 def cli(log_level):
@@ -16,52 +20,88 @@ def cli(log_level):
 
     Manage user and team project accounts on a linux box using Canvas provided group file.
     
-    
     """
     set_logger( log_level=log_level)
     pass
 
-@cli.command()
+##
+## SOLO commands
+##
+
+@cli.group(invoke_without_command=True)
+@click.pass_context
+def solo(ctx):
+    """ Subcommand group to work with solo teams or users """
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())  # Show help if no subcommand is provided
+
+@solo.command()
+@click.option("--sql", type=click.Path(exists=True, dir_okay=False, readable=True), \
+              help="SQL file to load into the database")
+@click.option("--database", help="Database name to receive the SQL")
+@click.pass_context
+def load_sql(ctx, sql, database):
+    """ Load a SQL file into a database """
+    if not sql or not database:
+        click.echo(ctx.get_help())  # Show help message if required params are missing
+        ctx.exit(1)  # Exit with error
+    # Add logic to load SQL file into the database
+    click.echo(f"Loading SQL from {sql} into database {database}")
+
+@solo.command()
 @click.argument("username")
 def create_user(username):
-    """ create a user bundle """
+    """ create DB user bundle """
     create_user_bundle( username )
 
-@cli.command()
+@solo.command()
 @click.argument("username")
 def delete_user( username ):
-    """ delete a user bundle """
+    """ delete DB user user bundle """
     delete_user_bundle( username )
 
-@cli.command()
+@solo.command()
 @click.argument("teamname")
 def create_team(teamname):
     """ create a team bundle """
     create_team_bundle( teamname )
 
-@cli.command()
+@solo.command()
 @click.argument("teamname")
 def delete_team( teamname ):
     """ delete a team bundle """
     delete_team_bundle( teamname )
 
-@cli.command()
+##
+## FILE commands
+##
+
+@cli.group()
+def file():
+    """ subcommand group for listing file resources """
+    pass
+
+@file.command()
 @click.option("--team-file",help="csv groups downloaded from Canvas",default=DEFAULT_GROUP_CSV_FILE)
-def list_teams_in_file( team_file ):
+def teams( team_file ):
     """ List teams in group file """
     list_groups_in_csv_file( team_file )
 
-@cli.command()
+@file.command()
 @click.option("--team-file",help="csv groups downloaded from Canvas",default=DEFAULT_GROUP_CSV_FILE)
-def list_users_in_file( team_file ):
+def users( team_file ):
     """ List users in group file """
     list_users_in_csv_file( team_file )
 
-@cli.command()
+@file.command()
 @click.option("--team-file",help="csv groups downloaded from Canvas",default=DEFAULT_GROUP_CSV_FILE)
-def list_teams_and_users_in_file( team_file ):
+def pairs( team_file ):
     """ List users in group file """
     list_groups_and_users_in_csv_file( team_file )
+
+##
+## BUILD commands
+##
 
 @cli.group()
 def build():
@@ -80,7 +120,7 @@ def users():
 
 @build.command()
 @click.option("--team-file",help="csv groups downloaded from Canvas",default=DEFAULT_GROUP_CSV_FILE)
-def connections( team_file ):
+def pairs( team_file ):
     """ Connects users to teams, creating as necessary """
     create_connections_from_csv_file( team_file )
 
