@@ -105,7 +105,7 @@ def pairs( team_file ):
 
 @cli.group()
 def build():
-    """Subcommand group for building resources."""
+    """ Subcommand group for building resources on server. """
     pass
 
 @build.command()
@@ -131,6 +131,43 @@ def populate_hr_database( team_file, hr_ddl_file ):
     """ Connects users to teams, creating as necessary """
     populate_hr_databases_from_csv_file( team_file, hr_ddl_file )
 
+##
+## SERVER commands
+##
+
+@cli.group()
+def server():
+    """
+    Subcommand group for reviewing resources on the server.
+    
+    These commands are less opinionated.  They look at mysql, groups and passwd
+    without making assumptions about how the accounts may have been created.
+
+    Use the `file` commands to determine if server matches entries in file.
+        
+"""
+    pass
+
+@server.command()
+def users():
+    """ Lists linux users on server """
+    click.echo(f"(Not operational).")
+
+@server.command()
+def groups():
+    """ Lists linux groups on server """
+    click.echo(f"(Not operational).")
+
+@server.command()
+def db_users():
+    """ Lists database users on server """
+    click.echo(f"(Not operational).")
+
+
+@server.command()
+def databases():
+    """ Lists databases on server """
+    click.echo(f"(Not operational).")
 
 if __name__ == '__main__':
     cli()
