@@ -8,7 +8,6 @@ import subprocess
 from loguru import logger
 from src.logging import DEFAULT_LOG_LEVEL, set_logger, sniff_log_level
 
-
 TEST = False
 
 TERM_CODE = "24FA"
@@ -40,10 +39,15 @@ def get_users_with_uid_above(min_uid=USER_LOWER_UID):
             uid = int(fields[2])   # UID is the third field
             
             # Check if UID is greater than the specified min_uid
-            if uid >= min_uid:
+            if (uid >= min_uid) and (username.startswith("24FA_")):
                 users.append(username)
     
     return users
+
+def list_users_on_server():
+    """ list users with uid above threshhold """
+    for i,user in enumerate(get_users_with_uid_above()):
+        print( user )
 
 def get_groups_with_gid_above(min_gid=GROUP_LOWER_GID):
     """Return a list of groups with a GID greater than or equal to min_gid from /etc/group."""
@@ -57,10 +61,14 @@ def get_groups_with_gid_above(min_gid=GROUP_LOWER_GID):
             gid = int(fields[2])    # GID is the third field
             
             # Check if GID is greater than or equal to the specified min_gid
-            if gid >= min_gid:
+            if (gid >= min_gid) and (group_name.startswith("24FA_")):
                 groups.append(group_name)
-    
     return groups
+
+def list_groups_on_server():
+    """ list groups with gid above threshhold """
+    for i,group in enumerate(get_groups_with_gid_above()):
+        print( group )
 
 def get_next_available_uid(min_uid=USER_LOWER_UID):
     """Read /etc/passwd and determine the next available UID after min_uid."""
@@ -382,6 +390,39 @@ def drop_user_database_and_user( user_name ):
 def drop_hr_database_and_user( user_name ):
     """ set up individual user database """
     drop_database_and_user( user_name, DB_HR_ROOT )
+
+def get_dbusers_on_server():
+    """ return list of mysql users and host """
+    result = run_command("mysql -e 'select user,host from mysql.user'",use_sudo=True)
+    return [item for item in result.stdout.split("\n") if item.startswith("24FA_") ]
+
+def get_databases_on_server():
+    """ return list of mysql users and host """
+    result = run_command("mysql -e 'show databases'",use_sudo=True)
+    return [item for item in result.stdout.split("\n") if item.startswith("24FA") ]
+
+def list_dbusers_on_server():
+    """ print list of db users on server """
+    for i,user in enumerate( get_dbusers_on_server()):
+        print( user )
+
+def list_databases_on_server():
+    """ print list of databases on server """
+    for i,db in enumerate( get_databases_on_server()):
+        print( db )
+
+def get_server_counts():
+    """ return list of server counts """
+    status = dict( users=len(get_users_with_uid_above()), groups=len(get_groups_with_gid_above()),dbusers=len(get_dbusers_on_server()), databases=len(get_databases_on_server()))
+    return status
+
+def list_server_counts():
+    """ return list of server counts """
+    status = get_server_counts()
+    for key in status.keys():
+        print(f"{key} : {status[key]}")
+
+
 
 def create_user_bundle( user_name, hr_data_file=None ):
     """ do all things necessary to create a user """

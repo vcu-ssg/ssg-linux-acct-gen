@@ -1,7 +1,8 @@
 import click
 import subprocess
 
-from src.utils import create_user_bundle, delete_user_bundle, create_team_bundle, delete_team_bundle
+from src.utils import create_user_bundle, delete_user_bundle, create_team_bundle, delete_team_bundle, \
+    list_groups_on_server, list_users_on_server, list_dbusers_on_server, list_databases_on_server, list_server_counts
 from src.file_utils import list_groups_in_csv_file, list_users_in_csv_file, list_groups_and_users_in_csv_file, \
       create_connections_from_csv_file, populate_hr_databases_from_csv_file
 from src.logging import DEFAULT_LOG_LEVEL, set_logger
@@ -151,23 +152,27 @@ def server():
 @server.command()
 def users():
     """ Lists linux users on server """
-    click.echo(f"(Not operational).")
+    list_users_on_server()
 
 @server.command()
 def groups():
     """ Lists linux groups on server """
-    click.echo(f"(Not operational).")
+    list_groups_on_server()
 
 @server.command()
 def db_users():
     """ Lists database users on server """
-    click.echo(f"(Not operational).")
-
+    list_dbusers_on_mysql()
 
 @server.command()
 def databases():
     """ Lists databases on server """
-    click.echo(f"(Not operational).")
+    list_databases_on_server()
+
+@server.command()
+def counts():
+    """ show server statistics """
+    list_server_counts()
 
 if __name__ == '__main__':
     cli()
