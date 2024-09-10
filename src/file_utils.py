@@ -51,6 +51,16 @@ def get_groups_and_users_in_file( filename ):
         bundles.append( dict(group=row['group_name'],user=row['login_id']))
     return bundles
 
+def get_counts_in_file( filename ):
+    """ return list with various counts from file """
+    counts = dict( users=len(get_users_in_file( filename)),teams=len(get_groups_in_file(filename)),pairs=len(get_groups_and_users_in_file(filename)) )
+    return counts
+
+def list_counts_in_file( filename ):
+    """ list counts in file """
+    status = get_counts_in_file( filename )
+    for key in status.keys():
+        print(f"{key}\t{status[key]}")
 
 def list_groups_in_csv_file( filename ):
     """ list groups in file """
