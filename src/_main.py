@@ -32,7 +32,15 @@ def cli(log_level):
 @cli.group(invoke_without_command=True)
 @click.pass_context
 def solo(ctx):
-    """ Subcommand group to work with solo teams or users """
+    """ Subcommand group to work with solo teams or users
+
+    Teams and users only differ in their database name, leveraging the roll-up feature of
+    mysql database naming convention.
+
+    Adds linux user account, roup, and password.  Adds user and HR databases, and grants access to user.
+    Teams don't get HR database, just team database.
+    
+    """
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help())  # Show help if no subcommand is provided
 
