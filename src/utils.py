@@ -39,7 +39,7 @@ def get_users_with_uid_above(min_uid=USER_LOWER_UID):
             uid = int(fields[2])   # UID is the third field
             
             # Check if UID is greater than the specified min_uid
-            if (uid >= min_uid) and (username.startswith("24FA_")):
+            if (uid >= min_uid) and (username.startswith(f"{TERM_CODE}_")):
                 users.append(username)
     
     return users
@@ -61,7 +61,7 @@ def get_groups_with_gid_above(min_gid=GROUP_LOWER_GID):
             gid = int(fields[2])    # GID is the third field
             
             # Check if GID is greater than or equal to the specified min_gid
-            if (gid >= min_gid) and (group_name.startswith("24FA_")):
+            if (gid >= min_gid) and (group_name.startswith(f"{TERM_CODE}_")):
                 groups.append(group_name)
     return groups
 
@@ -397,12 +397,12 @@ def drop_hr_database_and_user( user_name ):
 def get_dbusers_on_server():
     """ return list of mysql users and host """
     result = run_command("mysql -e 'select user,host from mysql.user'",use_sudo=True)
-    return [item for item in result.stdout.split("\n") if item.startswith("24FA_") ]
+    return [item for item in result.stdout.split("\n") if item.startswith(f"{TERM_CODE}_") ]
 
 def get_databases_on_server():
     """ return list of mysql users and host """
     result = run_command("mysql -e 'show databases'",use_sudo=True)
-    return [item for item in result.stdout.split("\n") if item.startswith("24FA") ]
+    return [item for item in result.stdout.split("\n") if item.startswith(f"{TERM_CODE}_") ]
 
 def list_dbusers_on_server():
     """ print list of db users on server """
@@ -413,6 +413,10 @@ def list_databases_on_server():
     """ print list of databases on server """
     for i,db in enumerate( get_databases_on_server()):
         print( db )
+    
+def delete_database_on_server( database_name ):
+    """ delete database on server """
+    result = run_command(f'mysql -e "drop database {database_name};"', use_sudo=True)
 
 def get_server_counts():
     """ return list of server counts """
@@ -424,8 +428,6 @@ def list_server_counts():
     status = get_server_counts()
     for key in status.keys():
         print(f"{key} : {status[key]}")
-
-
 
 def create_user_bundle( user_name, hr_data_file=None ):
     """ do all things necessary to create a user """
@@ -445,7 +447,6 @@ def populate_hr_db_raw( user_name, hr_data_file=None ):
     if not hr_data_file is None:
         populate_hr_database( clean_name, DB_HR_ROOT, hr_data_file )
         logger.success(f"Populated {DB_HR_ROOT}_{clean_name} with {hr_data_file}")
-    
 
 def delete_user_bundle( user_name ):
     """ do all things necessary to delete a user """
@@ -494,6 +495,17 @@ def delete_teams_on_server():
     """ delete teams with gid above threshhold """
     for i,group in enumerate(get_groups_with_gid_above()):
         delete_team_bundle( group )
+
+def delete_dbusers_on_server():
+    """ delete database users on server """
+    for i,user in enumerate( get_dbusers_on_server()):
+        delete_user_bundle( user )
+
+def delete_databases_on_server():
+    """ delete databases on server """
+    for i,database in enumerate( get_databases_on_server()):
+        delete_database_on_server( database )
+        
 
 
 """

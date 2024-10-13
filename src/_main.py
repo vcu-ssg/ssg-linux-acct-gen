@@ -3,7 +3,7 @@ import subprocess
 
 from src.utils import create_user_bundle, delete_user_bundle, create_team_bundle, delete_team_bundle, \
     list_groups_on_server, list_users_on_server, list_dbusers_on_server, list_databases_on_server, list_server_counts, \
-    delete_users_on_server, delete_teams_on_server 
+    delete_users_on_server, delete_teams_on_server, delete_databases_on_server, delete_dbusers_on_server
 from src.file_utils import list_groups_in_csv_file, list_users_in_csv_file, list_groups_and_users_in_csv_file, \
       create_connections_from_csv_file, populate_hr_databases_from_csv_file, list_counts_in_file, \
       create_users_from_csv_file, create_groups_from_csv_file 
@@ -186,14 +186,23 @@ def groups( delete ):
         delete_teams_on_server()
 
 @server.command()
-def db_users():
+@click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
+def db_users( delete ):
     """ Lists database users on server """
-    list_dbusers_on_server()
+    if not delete:
+        list_dbusers_on_server()
+    else:
+        delete_dbusers_on_server()
+
 
 @server.command()
-def databases():
+@click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
+def databases( delete ):
     """ Lists databases on server """
-    list_databases_on_server()
+    if not delete:
+        list_databases_on_server()
+    else:
+        delete_databases_on_server()
 
 @server.command()
 def counts():
