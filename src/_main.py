@@ -173,9 +173,9 @@ def server():
 def users( delete,term_code ):
     """ Lists linux users on server """
     if not delete:
-        list_users_on_server( term_code )
+        list_users_on_server( term_code=term_code )
     else:
-        delete_users_on_server( term_code )
+        delete_users_on_server( term_code=term_code )
 
 @server.command()
 @click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
@@ -192,9 +192,9 @@ def groups( delete ):
 def dbusers( delete,term_code ):
     """ Lists database users on server """
     if not delete:
-        list_dbusers_on_server( term_code )
+        list_dbusers_on_server( term_code=term_code )
     else:
-        delete_dbusers_on_server( term_code )
+        delete_dbusers_on_server( term_code=term_code )
 
 
 @server.command()
@@ -203,9 +203,9 @@ def dbusers( delete,term_code ):
 def databases( delete,term_code ):
     """ Lists databases on server """
     if not delete:
-        list_databases_on_server( term_code )
+        list_databases_on_server( term_code=term_code )
     else:
-        delete_databases_on_server( term_code )
+        delete_databases_on_server( term_code=term_code )
 
 @server.command()
 def counts():

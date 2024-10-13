@@ -496,12 +496,12 @@ def delete_teams_on_server():
     for i,group in enumerate(get_groups_with_gid_above()):
         delete_team_bundle( group )
 
-def delete_dbusers_on_server( term_code ):
+def delete_dbusers_on_server( term_code=TERM_CODE ):
     """ delete database users on server """
     for i,user in enumerate( get_dbusers_on_server( term_code )):
         drop_user_database_and_user( user.split("\t")[0] )
 
-def delete_databases_on_server( term_code ):
+def delete_databases_on_server( term_code=TERM_CODE ):
     """ delete databases on server """
     for i,database in enumerate( get_databases_on_server( term_code )):
         delete_database_on_server( database )
