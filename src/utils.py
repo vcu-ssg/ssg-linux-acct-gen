@@ -156,7 +156,10 @@ def clean_name_for_linux_group( name ):
 
 def db_password( name ):
     """ return a database password for user account 'name' """
-    passwd = f"Shout4_{name}_JOY"
+    eid = name
+    if "_" in eid:
+        eid = name.split("_")[1]
+    passwd = f"Shout4_{eid}_JOY"
     return passwd
 
 def group_exists(groupname):
@@ -239,7 +242,8 @@ def create_user_account(username):
         if not user_exists( term_username ):
             uid = get_next_available_uid()
             run_command( f"useradd -u {uid} -g {term_groupname} -m -d {USER_FOLDER}/{term_username} -k {USER_SKELETON} -s /bin/bash {term_username}", use_sudo=True )
-            run_command( f'echo "{term_username}:PASSWORD" | sudo -S chpasswd', use_sudo=True )
+            password = db_password( username )
+            run_command( f'echo "{term_username}:{password}" | sudo -S chpasswd', use_sudo=True )
         html_folder = f"{USER_FOLDER}/{term_username}/public_html"
         create_directory_if_not_exists( html_folder )
         create_htaccess_file( html_folder, term_username )
@@ -487,7 +491,7 @@ def delete_connection( team_name, user_name ):
     remove_user_from_group( clean_user, clean_team )
     logger.success(f"User {clean_user} removed from team {clean_team}.")
 
-def delete_users_on_server():
+def delete_users_on_server( term_code=TERM_CODE ):
     """ delete users with uid above threshhold """
     for i,user in enumerate(get_users_with_uid_above()):
         delete_user_bundle( user )
