@@ -499,7 +499,7 @@ def delete_teams_on_server():
 def delete_dbusers_on_server():
     """ delete database users on server """
     for i,user in enumerate( get_dbusers_on_server()):
-        delete_user_bundle( user )
+        drop_user_database_and_user( user, DB_USER_ROOT )
 
 def delete_databases_on_server():
     """ delete databases on server """
