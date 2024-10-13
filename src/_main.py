@@ -169,12 +169,13 @@ def server():
 
 @server.command()
 @click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
-def users( delete ):
+@click.option('--term-code', help='Term code in name (e.g., 24FA, 23SP, etc.)', default="24FA")
+def users( delete,term_code ):
     """ Lists linux users on server """
     if not delete:
-        list_users_on_server()
+        list_users_on_server( term_code )
     else:
-        delete_users_on_server()
+        delete_users_on_server( term_code )
 
 @server.command()
 @click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
@@ -187,22 +188,24 @@ def groups( delete ):
 
 @server.command()
 @click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
-def db_users( delete ):
+@click.option('--term-code', help='Term code in name (e.g., 24FA, 23SP, etc.)', default="24FA")
+def dbusers( delete,term_code ):
     """ Lists database users on server """
     if not delete:
-        list_dbusers_on_server()
+        list_dbusers_on_server( term_code )
     else:
-        delete_dbusers_on_server()
+        delete_dbusers_on_server( term_code )
 
 
 @server.command()
 @click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
-def databases( delete ):
+@click.option('--term-code', help='Term code in name (e.g., 24FA, 23SP, etc.)', default="24FA")
+def databases( delete,term_code ):
     """ Lists databases on server """
     if not delete:
-        list_databases_on_server()
+        list_databases_on_server( term_code )
     else:
-        delete_databases_on_server()
+        delete_databases_on_server( term_code )
 
 @server.command()
 def counts():

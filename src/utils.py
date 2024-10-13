@@ -44,7 +44,7 @@ def get_users_with_uid_above(min_uid=USER_LOWER_UID):
     
     return users
 
-def list_users_on_server():
+def list_users_on_server( term_code=TERM_CODE):
     """ list users with uid above threshhold """
     for i,user in enumerate(get_users_with_uid_above()):
         print( user )
@@ -394,24 +394,24 @@ def drop_hr_database_and_user( user_name ):
     """ set up individual user database """
     drop_database_and_user( user_name, DB_HR_ROOT )
 
-def get_dbusers_on_server():
+def get_dbusers_on_server( term_code=TERM_CODE ):
     """ return list of mysql users and host """
     result = run_command("mysql -e 'select user,host from mysql.user'",use_sudo=True)
-    return [item for item in result.stdout.split("\n") if item.startswith(f"{TERM_CODE}_") ]
+    return [item for item in result.stdout.split("\n") if item.startswith(f"{term_code}_") ]
 
-def get_databases_on_server():
+def get_databases_on_server( term_code=TERM_CODE):
     """ return list of mysql users and host """
     result = run_command("mysql -e 'show databases'",use_sudo=True)
-    return [item for item in result.stdout.split("\n") if item.startswith(f"{TERM_CODE}_") ]
+    return [item for item in result.stdout.split("\n") if item.startswith(f"{term_code}_") ]
 
-def list_dbusers_on_server():
+def list_dbusers_on_server( term_code ):
     """ print list of db users on server """
-    for i,user in enumerate( get_dbusers_on_server()):
+    for i,user in enumerate( get_dbusers_on_server( term_code=term_code )):
         print( user )
 
-def list_databases_on_server():
+def list_databases_on_server( term_code ):
     """ print list of databases on server """
-    for i,db in enumerate( get_databases_on_server()):
+    for i,db in enumerate( get_databases_on_server(term_code=term_code)):
         print( db )
     
 def delete_database_on_server( database_name ):
@@ -496,14 +496,14 @@ def delete_teams_on_server():
     for i,group in enumerate(get_groups_with_gid_above()):
         delete_team_bundle( group )
 
-def delete_dbusers_on_server():
+def delete_dbusers_on_server( term_code ):
     """ delete database users on server """
-    for i,user in enumerate( get_dbusers_on_server()):
-        drop_user_database_and_user( user )
+    for i,user in enumerate( get_dbusers_on_server( term_code )):
+        drop_user_database_and_user( user.split("\t")[0] )
 
-def delete_databases_on_server():
+def delete_databases_on_server( term_code ):
     """ delete databases on server """
-    for i,database in enumerate( get_databases_on_server()):
+    for i,database in enumerate( get_databases_on_server( term_code )):
         delete_database_on_server( database )
         
 
