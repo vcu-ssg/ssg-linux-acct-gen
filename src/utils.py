@@ -11,7 +11,8 @@ from src.logging import DEFAULT_LOG_LEVEL, set_logger, sniff_log_level
 TEST = False
 
 TERM_CODE = "24FA"
-USER_SKELETON = "/etc/skel_for_cmsc408"
+#USER_SKELETON = "/etc/skel_for_cmsc408"
+USER_SKELETON = "./skel"  # use a .skel folder under current working directory.
 USER_FOLDER = f"/home/{TERM_CODE}"
 WWW_ROOT = f"/var/www/html/{TERM_CODE}"
 DB_TEAM_ROOT = f"{TERM_CODE}_teams"
