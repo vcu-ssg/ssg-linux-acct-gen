@@ -31,25 +31,74 @@ def clean_user_name(team_name):
 def get_groups_in_file( filename ):
     """ return list of groups in file """
     logger.debug(f"get_groups_in_file( {filename} )")
-    df = pd.read_csv( filename )
-    groups = sorted(list(set(df['group_name'].tolist())))
-    return groups
+    try:
+        df = pd.read_csv(filename)
+        groups = sorted(list(set(df['group_name'].tolist())))
+        return groups
+    except FileNotFoundError:
+        logger.error(f"File {filename} not found.")
+        return []
+    except pd.errors.EmptyDataError:
+        logger.error(f"File {filename} is empty.")
+        return []
+    except pd.errors.ParserError:
+        logger.error(f"Error parsing file {filename}.")
+        return []
+    except KeyError:
+        logger.error(f"Column 'group_name' not found in {filename}.")
+        return []
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        return []
 
 def get_users_in_file( filename ):
     """ return list of groups in file """
     logger.debug(f"get_users_in_file( {filename} )")
-    df = pd.read_csv( filename )
-    users = sorted(list(set(df['login_id'].tolist())))
-    return users
+    try:
+        df = pd.read_csv( filename )
+        users = sorted(list(set(df['login_id'].tolist())))
+        return users
+    except FileNotFoundError:
+        logger.error(f"File {filename} not found.")
+        return []
+    except pd.errors.EmptyDataError:
+        logger.error(f"File {filename} is empty.")
+        return []
+    except pd.errors.ParserError:
+        logger.error(f"Error parsing file {filename}.")
+        return []
+    except KeyError:
+        logger.error(f"Column 'group_name' not found in {filename}.")
+        return []
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        return []
 
 def get_groups_and_users_in_file( filename ):
     """ return list of group and users in file """
     logger.debug(f"get_groups_and_users_in_file( {filename} )")
-    df = pd.read_csv( filename )
-    bundles = []
-    for i,row in df.iterrows():
-        bundles.append( dict(group=row['group_name'],user=row['login_id']))
-    return bundles
+    try:
+        df = pd.read_csv( filename )
+        bundles = []
+        for i,row in df.iterrows():
+            bundles.append( dict(group=row['group_name'],user=row['login_id']))
+        return bundles
+    except FileNotFoundError:
+        logger.error(f"File {filename} not found.")
+        return []
+    except pd.errors.EmptyDataError:
+        logger.error(f"File {filename} is empty.")
+        return []
+    except pd.errors.ParserError:
+        logger.error(f"Error parsing file {filename}.")
+        return []
+    except KeyError:
+        logger.error(f"Column 'group_name' not found in {filename}.")
+        return []
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        return []
+
 
 def get_counts_in_file( filename ):
     """ return list with various counts from file """
@@ -108,4 +157,4 @@ def populate_hr_databases_from_csv_file( team_file, hr_ddl_file ):
         for i,user in enumerate( users ):
             populate_hr_db_raw( clean_user_name(user), hr_data_file=hr_file )
     else:
-        logger.error(f"Missing hr datafile: {hr_file}")
+        logger.error(f"Missing hr datafile: {hr_ddl_file}")

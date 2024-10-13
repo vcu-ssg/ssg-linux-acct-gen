@@ -2,9 +2,11 @@ import click
 import subprocess
 
 from src.utils import create_user_bundle, delete_user_bundle, create_team_bundle, delete_team_bundle, \
-    list_groups_on_server, list_users_on_server, list_dbusers_on_server, list_databases_on_server, list_server_counts
+    list_groups_on_server, list_users_on_server, list_dbusers_on_server, list_databases_on_server, list_server_counts, \
+    delete_users_on_server, delete_teams_on_server 
 from src.file_utils import list_groups_in_csv_file, list_users_in_csv_file, list_groups_and_users_in_csv_file, \
-      create_connections_from_csv_file, populate_hr_databases_from_csv_file, list_counts_in_file
+      create_connections_from_csv_file, populate_hr_databases_from_csv_file, list_counts_in_file, \
+      create_users_from_csv_file, create_groups_from_csv_file 
 from src.logging import DEFAULT_LOG_LEVEL, set_logger
 
 DEFAULT_GROUP_CSV_FILE = "semester-project-groups.csv"
@@ -37,7 +39,7 @@ def solo(ctx):
     Teams and users only differ in their database name, leveraging the roll-up feature of
     mysql database naming convention.
 
-    Adds linux user account, roup, and password.  Adds user and HR databases, and grants access to user.
+    Adds linux user account, group, and password.  Adds user and HR databases, and grants access to user.
     Teams don't get HR database, just team database.
     
     """
@@ -124,14 +126,16 @@ def build():
     pass
 
 @build.command()
-def teams():
+@click.option("--team-file",help="csv groups downloaded from Canvas",default=DEFAULT_GROUP_CSV_FILE)
+def teams( team_file ):
     """ Creates team resources"""
-    click.echo(f"Teams created successfully.")
+    create_groups_from_csv_file( team_file )
 
 @build.command()
-def users():
+@click.option("--team-file",help="csv groups downloaded from Canvas",default=DEFAULT_GROUP_CSV_FILE)
+def users( team_file ):
     """ Creates user resources"""
-    click.echo(f"Users created successfully.")
+    create_users_from_csv_file( team_file )
 
 @build.command()
 @click.option("--team-file",help="csv groups downloaded from Canvas",default=DEFAULT_GROUP_CSV_FILE)
@@ -164,14 +168,22 @@ def server():
     pass
 
 @server.command()
-def users():
+@click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
+def users( delete ):
     """ Lists linux users on server """
-    list_users_on_server()
+    if not delete:
+        list_users_on_server()
+    else:
+        delete_users_on_server()
 
 @server.command()
-def groups():
+@click.option('--delete', is_flag=True, help='Delete the specified item.', default=False)
+def groups( delete ):
     """ Lists linux groups on server """
-    list_groups_on_server()
+    if not delete:
+        list_groups_on_server()
+    else:
+        delete_teams_on_server()
 
 @server.command()
 def db_users():

@@ -134,7 +134,10 @@ def run_command(command, use_sudo=False):
 
 def clean_user_name(team_name):
     # Convert to lowercase (optional for consistency)
-    fixed_name = f"{TERM_CODE}_" + team_name.lower()
+    if not team_name.startswith( TERM_CODE ):
+        fixed_name = f"{TERM_CODE}_" + team_name.lower()
+    else:
+        fixed_name = team_name
     
     # Replace hyphens and other invalid characters with underscores
     fixed_name = re.sub(r'[^a-zA-Z0-9_]', '_', fixed_name)
@@ -462,7 +465,7 @@ def create_team_bundle( team_name ):
     logger.success(f"Team bundle {clean_name} created.")
 
 def delete_team_bundle( team_name ):
-    """ do all things necessary to delete a user """
+    """ do all things necessary to delete a team """
     click.echo(f"Goodbye {team_name}! I will delete you now.")
     clean_name = clean_user_name( team_name )
     drop_team_database_and_user( clean_name )
@@ -481,6 +484,17 @@ def delete_connection( team_name, user_name ):
     revoke_database_from_user( clean_team, clean_user )
     remove_user_from_group( clean_user, clean_team )
     logger.success(f"User {clean_user} removed from team {clean_team}.")
+
+def delete_users_on_server():
+    """ delete users with uid above threshhold """
+    for i,user in enumerate(get_users_with_uid_above()):
+        delete_user_bundle( user )
+
+def delete_teams_on_server():
+    """ delete teams with gid above threshhold """
+    for i,group in enumerate(get_groups_with_gid_above()):
+        delete_team_bundle( group )
+
 
 """
 
