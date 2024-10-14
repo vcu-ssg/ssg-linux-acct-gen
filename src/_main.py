@@ -61,9 +61,10 @@ def load_sql(ctx, sql, database):
 
 @solo.command()
 @click.argument("username")
-def create_user(username):
+@click.option("--hr-ddl-file",help="hr DDL file",default=DEFAULT_HR_DDL_FILE)
+def create_user(username,hr_ddl_file):
     """ create DB user bundle """
-    create_user_bundle( username )
+    create_user_bundle( username,hr_data_file=hr_ddl_file )
 
 @solo.command()
 @click.argument("username")
