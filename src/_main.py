@@ -3,7 +3,7 @@ import subprocess
 
 from src.utils import create_user_bundle, delete_user_bundle, create_team_bundle, delete_team_bundle, \
     list_groups_on_server, list_users_on_server, list_dbusers_on_server, list_databases_on_server, list_server_counts, \
-    delete_users_on_server, delete_teams_on_server, delete_databases_on_server, delete_dbusers_on_server
+    delete_users_on_server, delete_teams_on_server, delete_databases_on_server, delete_dbusers_on_server, populate_database
 from src.file_utils import list_groups_in_csv_file, list_users_in_csv_file, list_groups_and_users_in_csv_file, \
       create_connections_from_csv_file, populate_hr_databases_from_csv_file, list_counts_in_file, \
       create_users_from_csv_file, create_groups_from_csv_file 
@@ -49,15 +49,17 @@ def solo(ctx):
 @solo.command()
 @click.option("--sql", type=click.Path(exists=True, dir_okay=False, readable=True), \
               help="SQL file to load into the database")
-@click.option("--database", help="Database name to receive the SQL")
+@click.option("--database", help="Database name to receive the SQL", default=None)
+@click.option("--username", help="Username loading the database", default=None)
 @click.pass_context
-def load_sql(ctx, sql, database):
+def load_sql(ctx, sql, database, username):
     """ Load a SQL file into a database """
-    if not sql or not database:
+    if not sql or not database or not username:
         click.echo(ctx.get_help())  # Show help message if required params are missing
         ctx.exit(1)  # Exit with error
     # Add logic to load SQL file into the database
-    click.echo(f"Loading SQL from {sql} into database {database}")
+    populate_database( username, database, sql )
+    
 
 @solo.command()
 @click.argument("username")

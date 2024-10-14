@@ -369,11 +369,22 @@ def populate_hr_database( user_name, user_root, hr_data_file ):
         cmd = f"DROP DATABASE IF EXISTS {user_root}_{user_name}"
         run_command(f'mysql -e "{cmd}"', use_sudo=True)
         create_database_and_user( user_name, user_root );
-        cmd = f"mysql -u {user_name} -D {user_root}_{user_name} --password={db_password(user_name)} < {hr_data_file}"
-        run_command( cmd )
+#        cmd = f"mysql -u {user_name} -D {user_root}_{user_name} --password={db_password(user_name)} < {hr_data_file}"
+        cmd = f"mysql -D {user_root}_{user_name}  < {hr_data_file}"
+        run_command( cmd, use_sudo=True)
     except Exception as e:
         # If any command fails, this will print the error message with the command that failed
         logger.error(f"Error occurred (populate_hr_database): {e}")
+
+def populate_database( username,database,sql_file ):
+    """ populate a database for user """
+    try:
+#        cmd = f"mysql -u {username} -D {database} --password={db_password(username)} < {sql_file}"
+        cmd = f"mysql -D {database} < {sql_file}"
+        run_command( cmd, use_sudo=True )
+    except Exception as e:
+        # If any command fails, this will print the error message with the command that failed
+        logger.error(f"Error occurred (populate_database): {e}")
 
 def create_team_database_and_user( group_name ):
     """ set up team database """
