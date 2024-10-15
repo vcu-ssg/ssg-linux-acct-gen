@@ -497,15 +497,17 @@ def create_connection( team_name, user_name ):
     clean_team = clean_user_name( team_name )
     clean_user = clean_user_name( user_name )
     add_user_to_group( clean_user, clean_team )
-    grant_database_to_user( clean_team, clean_user )
-    logger.success(f"User {clean_user} added to team {clean_team}.")
+    dbname = f"{DB_TEAM_ROOT}_{clean_team}"
+    grant_database_to_user( dbname, clean_user )
+    logger.success(f"User {clean_user} added to team {dbname}.")
 
 def delete_connection( team_name, user_name ):
     clean_team = clean_user_name( team_name )
     clean_user = clean_user_name( user_name )
-    revoke_database_from_user( clean_team, clean_user )
+    dbname = f"{DB_TEAM_ROOT}_{clean_team}"
+    revoke_database_from_user( dbname, clean_user )
     remove_user_from_group( clean_user, clean_team )
-    logger.success(f"User {clean_user} removed from team {clean_team}.")
+    logger.success(f"User {clean_user} removed from team {dbname}.")
 
 def delete_users_on_server( term_code=TERM_CODE ):
     """ delete users with uid above threshhold """
