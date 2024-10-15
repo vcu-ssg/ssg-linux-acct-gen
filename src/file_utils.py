@@ -9,24 +9,10 @@ from loguru import logger
 from src.logging import DEFAULT_LOG_LEVEL, set_logger, sniff_log_level
 
 from src.utils import create_user_bundle, create_team_bundle, create_connection, \
-    user_exists_raw, group_exists_raw, populate_hr_db_raw
+    user_exists_raw, group_exists_raw, populate_hr_db_raw, db_password, clean_user_name
     
 
 import pandas as pd
-
-def clean_user_name(team_name):
-    # Convert to lowercase (optional for consistency)
-    fixed_name = team_name.lower().strip()
-    fixed_name = re.sub(r'\'+', '', fixed_name)
-    
-    # Replace hyphens and other invalid characters with underscores
-    fixed_name = re.sub(r'[^a-zA-Z0-9_]', '_', fixed_name)
-    fixed_name = re.sub(r'_+', '_', fixed_name).strip("_")
-    
-    # Ensure the name is not longer than 64 characters
-    fixed_name = fixed_name[:64]
-    
-    return fixed_name
 
 def get_groups_in_file( filename ):
     """ return list of groups in file """
@@ -115,7 +101,7 @@ def list_groups_in_csv_file( filename ):
     """ list groups in file """
     groups = get_groups_in_file( filename )
     for i,group in enumerate( groups ):
-        print( group+"\t"+clean_user_name(group)  )
+        print( group+"\t"+clean_user_name(group)+ "\t" + db_password( clean_user_name(group) )  )
 
 def list_users_in_csv_file( filename ):
     users = get_users_in_file( filename )

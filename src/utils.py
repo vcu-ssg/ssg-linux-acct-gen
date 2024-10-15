@@ -135,16 +135,20 @@ def run_command(command, use_sudo=False):
 
 def clean_user_name(team_name):
     # Convert to lowercase (optional for consistency)
-    if not team_name.startswith( TERM_CODE ):
-        fixed_name = f"{TERM_CODE}_" + team_name.lower()
-    else:
-        fixed_name = team_name
-    
-    # Replace hyphens and other invalid characters with underscores
+
+    fixed_name = team_name.lower()
     fixed_name = re.sub(r'[^a-zA-Z0-9_]', '_', fixed_name)
-    
+    fixed_name = fixed_name.strip("_")
+    fixed_name = re.sub(r'_+', '_', fixed_name )
+
+    if not team_name.startswith( TERM_CODE ):
+        fixed_name = f"{TERM_CODE}_" + fixed_name
+    else:
+        fixed_name = fixed_name
+
     # Ensure the name is not longer than 64 characters
     fixed_name = fixed_name[:64]
+    fixed_name = fixed_name.strip("_")
     
     return fixed_name
 
@@ -152,13 +156,14 @@ def clean_name_for_linux_group( name ):
     """ remove characters to create a valid linux group name """
     fixed_name = re.sub(r'[^a-zA-Z0-9]', '', name)
     fixed_name = fixed_name[:64]
+    fixed_name = fixed_name.strip("_")
     return fixed_name
 
 def db_password( name ):
     """ return a database password for user account 'name' """
     eid = name
     if "_" in eid:
-        eid = name.split("_")[1]
+        eid = name.split("_",1)[1]
     passwd = f"Shout4_{eid}_JOY"
     return passwd
 
